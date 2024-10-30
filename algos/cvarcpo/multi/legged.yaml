@@ -1,0 +1,60 @@
+# base
+name: cvarcpo_multi
+
+# for RL
+norm_obs: true
+norm_reward: false
+discount_factor: 0.99
+n_steps: 5000
+critic_lr: 3e-4
+n_critic_iters: 40
+max_grad_norm: 1.0
+gae_coeff: 0.97
+n_target_quantiles: 50
+
+# for trust region
+max_kl: 0.001
+kl_tolerance: 2.0
+adaptive_lr_ratio: 2.0
+clip_ratio: 0.2
+
+# for constraint
+con_thresholds: [0.025, 0.025, 0.4]
+con_alphas: [0.25, 0.25, 0.25]
+
+# for CVaR-CPO
+n_actor_iters: 20
+actor_lr: 3e-5
+var_lr: 0.01
+con_lambda_lr: 0.01
+con_lambda_max: 1000.0
+
+# for logging
+logging:
+    cost_indep: [fps, reward_sum, eplen, kl, entropy, actor_loss, reward_critic_loss, cost_critic_loss]
+    cost_dep: [cost_sum, constraints, VaR, con_lambda]
+
+# for model
+model:
+    actor:
+        mlp:
+            shape: [512, 512]
+            activation: LeakyReLU
+        use_action_bound: true
+        log_std_init: 0.0
+        log_std_fix: false
+    reward_critic:
+        mlp:
+            shape: [512, 512]
+            activation: LeakyReLU
+        clip_range: [-np.inf, np.inf]
+        n_critics: 2
+        n_quantiles: 25
+    cost_critic:
+        mlp:
+            shape: [512, 512]
+            activation: LeakyReLU
+        last_activation: softplus
+        clip_range: [0.0, 100.0]
+        n_critics: 2
+        n_quantiles: 25

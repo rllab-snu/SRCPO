@@ -1,0 +1,12 @@
+name: Laikago-v0
+max_episode_len: 500
+is_earlystop: false
+n_envs: 5
+n_total_steps: 5000000
+
+backup_files: [
+    'tasks/laikago.yaml', 
+    'tasks/laikago/env_v0.py',
+    'tasks/laikago/generator.py']
+
+costs: ['body_angle', 'com_height', 'foot_timing']

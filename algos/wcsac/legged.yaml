@@ -1,0 +1,52 @@
+# base
+name: wcsac
+
+# for RL
+norm_obs: true
+norm_reward: false
+discount_factor: 0.99
+batch_size: 256
+actor_lr: 3e-4
+critic_lr: 3e-4
+n_steps: 100
+n_update_iters: 10
+max_grad_norm: 1.0
+len_replay_buffer: 1000000
+soft_update_ratio: 0.995
+
+# for constraint
+con_thresholds: [0.025, 0.025, 0.4]
+con_alphas: [0.25, 0.25, 0.25]
+con_lambdas_lr: 1e-3
+entropy_threshold: -2.0
+ent_alpha_lr: 1e-3
+
+# for logging
+logging:
+    cost_indep: [fps, reward_sum, eplen, entropy, entropy_alpha, objective, reward_critic_loss, cost_critic_loss]
+    cost_dep: [cost_sum, discounted_cost_sum, constraints, con_lambdas]
+
+# for model
+model:
+    actor:
+        mlp:
+            shape: [512, 512]
+            activation: LeakyReLU
+        use_action_bound: true
+        log_std_init: -2.0
+        log_std_fix: true
+    reward_critic:
+        mlp:
+            shape: [512, 512]
+            activation: LeakyReLU
+        clip_range: [-np.inf, np.inf]
+        n_critics: 2
+        n_quantiles: 25
+    cost_critic:
+        mlp:
+            shape: [512, 512]
+            activation: LeakyReLU
+        last_activation: softplus
+        clip_range: [0.0, 100.0]
+        n_critics: 2
+        n_quantiles: 25
